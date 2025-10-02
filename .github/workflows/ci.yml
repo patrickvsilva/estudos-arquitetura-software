@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run: |
+        pytest tests/ -v --cov=exemplos --cov-report=xml --cov-report=term
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install black isort flake8 pylint mypy
+
+    - name: Check code formatting with black
+      run: |
+        black --check exemplos/ tests/ || true
+
+    - name: Check import sorting with isort
+      run: |
+        isort --check-only exemplos/ tests/ || true
+
+    - name: Lint with flake8
+      run: |
+        flake8 exemplos/ --max-line-length=100 --count --statistics || true
+
+    - name: Lint with pylint
+      run: |
+        pylint exemplos/ || true
+
+    - name: Type check with mypy
+      run: |
+        mypy exemplos/ || true
+
+  examples:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run Singleton example
+      run: |
+        python exemplos/design-patterns/criacionais/singleton.py
+
+    - name: Run Strategy example
+      run: |
+        python exemplos/design-patterns/comportamentais/strategy.py
+
+    - name: Run Adapter example
+      run: |
+        python exemplos/design-patterns/estruturais/adapter.py
+
+    - name: Run Refactoring example
+      run: |
+        python exemplos/refactoring/antes_depois.py
