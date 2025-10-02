@@ -1,7 +1,5 @@
 # Resumo do livro Código Limpo
 
----
-
 ## Detalhes do Livro
 
 - Título: Clean Code: A Handbook of Agile Software Craftsmanship
@@ -9,8 +7,6 @@
 - Autor: Robert C. Martin (Uncle Bob)
 
 - 464 Páginas
-
----
 
 ## Capítulo 1: O que é Código Limpo?
 
@@ -48,8 +44,6 @@ area = largura * altura
 
 ```
 
----
-
 ## Capítulo 2: Significando Nomes
 
 - Nomes são fundamentais para clareza: variáveis, funções e classes devem ter nomes descritivos e específicos.
@@ -83,8 +77,6 @@ def processar_pagamento():
     pass
 
 ```
-
----
 
 ## Capítulo 3: Funções
 
@@ -125,3 +117,6 @@ def criar_usuario(dados_usuario):
     pass
 
 ```
+
+## Capítulo 4: Comentários
+
